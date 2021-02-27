@@ -1,6 +1,6 @@
-mod vec3;
+mod math;
 
-use self::vec3::Vec3;
+use crate::math::Vec3;
 
 fn main() {
     const IMAGE_WIDTH: u32 = 256;
