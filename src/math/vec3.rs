@@ -1,6 +1,8 @@
 use std::fmt::{Debug, Formatter, Result};
 use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
 
+use rand::Rng;
+
 #[derive(Clone, Copy, PartialEq)]
 pub struct Vec3 {
     x: f64,
@@ -31,6 +33,31 @@ impl Vec3 {
             y: x.into(),
             z: x.into(),
         }
+    }
+
+    pub fn random_in_unit_sphere() -> Vec3 {
+        let mut rng = rand::thread_rng();
+        let unit = Vec3::one();
+        loop {
+            let p = 2.0 * Vec3::new(rng.gen::<f64>(), rng.gen::<f64>(), rng.gen::<f64>()) - unit;
+            if p.length_squared() < 1.0 {
+                return p;
+            };
+        }
+    }
+
+    pub fn random_unit_vector() -> Vec3 {
+        return Vec3::random_in_unit_sphere().unit_vector();
+    }
+
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-8;
+        self.x.abs() < s && self.y.abs() < s && self.z.abs() < s
+    }
+
+    pub fn reflect(self, other: Vec3) -> Vec3 {
+        let product = 2.0 * self.dot(&other);
+        self - product * other
     }
 
     // Useful Constant Vectors
@@ -122,9 +149,9 @@ impl Vec3 {
     pub fn write_color(&self, samples_per_pixel: u32) {
         let scale = 1.0 / (samples_per_pixel as f64);
 
-        let r = self.x * scale;
-        let g = self.y * scale;
-        let b = self.z * scale;
+        let r = (self.x * scale).sqrt();
+        let g = (self.y * scale).sqrt();
+        let b = (self.z * scale).sqrt();
 
         let ir = (r.clamp(0.0, 0.999) * 256.0) as u8;
         let ig = (g.clamp(0.0, 0.999) * 256.0) as u8;
@@ -182,6 +209,18 @@ impl Sub for Vec3 {
             x: self.x - other.x,
             y: self.y - other.y,
             z: self.z - other.z,
+        }
+    }
+}
+
+impl Mul<Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z,
         }
     }
 }

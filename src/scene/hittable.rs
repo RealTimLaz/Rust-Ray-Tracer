@@ -1,20 +1,20 @@
 use crate::math::{Point3, Vec3};
-use crate::render::Ray;
+use crate::render::{Material, Ray};
 
-pub struct HitRecord {
+pub struct HitRecord<'a> {
     p: Point3,
     normal: Vec3,
     t: f64,
-    front_face: bool,
+    material: &'a dyn Material,
 }
 
-impl HitRecord {
-    pub fn new(p: Point3, normal: Vec3, t: f64) -> HitRecord {
+impl<'a> HitRecord<'a> {
+    pub fn new(p: Point3, normal: Vec3, t: f64, material: &dyn Material) -> HitRecord {
         HitRecord {
             p,
             normal,
             t,
-            front_face: false,
+            material,
         }
     }
 
@@ -26,13 +26,12 @@ impl HitRecord {
         self.normal
     }
 
-    pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: Vec3) {
-        self.front_face = ray.direction().dot(&outward_normal) < 0.0;
-        self.normal = if self.front_face {
-            outward_normal
-        } else {
-            -outward_normal
-        }
+    pub fn p(&self) -> Point3 {
+        self.p
+    }
+
+    pub fn material(&self) -> &dyn Material {
+        self.material
     }
 }
 

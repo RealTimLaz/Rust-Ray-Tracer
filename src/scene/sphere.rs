@@ -1,15 +1,20 @@
 use super::{HitRecord, Hittable};
 use crate::math::Point3;
-use crate::render::Ray;
+use crate::render::{Material, Ray};
 
 pub struct Sphere {
     center: Point3,
     radius: f64,
+    material: Box<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(center: Point3, radius: f64) -> Sphere {
-        Sphere { center, radius }
+    pub fn new(center: Point3, radius: f64, material: Box<dyn Material>) -> Sphere {
+        Sphere {
+            center,
+            radius,
+            material,
+        }
     }
 }
 
@@ -29,20 +34,19 @@ impl Hittable for Sphere {
         let sqrt_discriminant = discriminant.sqrt();
         let root = (-half_b - sqrt_discriminant) / a;
 
-        if root < t_min || t_max < root {
-            let root = (-half_b + sqrt_discriminant) / a;
-            if root < t_min || t_max < root {
-                return None;
-            }
+        if root < t_max && root > t_min {
+            let p = ray.at(root);
+            let normal = (p - self.center) / self.radius;
+            return Some(HitRecord::new(p, normal, root, &*self.material));
         }
 
-        let t = root;
-        let p = ray.at(root);
-        let normal = (p - self.center) / self.radius;
-        let mut hit_record = HitRecord::new(p, normal, t);
-        let outward_normal = (p - self.center) / self.radius;
-        hit_record.set_face_normal(ray, outward_normal);
+        let root = (-half_b + sqrt_discriminant) / a;
+        if root < t_max && root > t_min {
+            let p = ray.at(root);
+            let normal = (p - self.center) / self.radius;
+            return Some(HitRecord::new(p, normal, root, &*self.material));
+        }
 
-        Some(hit_record)
+        None
     }
 }
