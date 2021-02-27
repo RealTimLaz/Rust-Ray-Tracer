@@ -1,6 +1,7 @@
-use std::ops::Add;
+use std::fmt::{Debug, Formatter, Result};
+use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct Vec3 {
     x: f64,
     y: f64,
@@ -81,6 +82,90 @@ impl Add for Vec3 {
     }
 }
 
+impl Neg for Vec3 {
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        Vec3 {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
+
+impl Sub for Vec3 {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Vec3 {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
+        }
+    }
+}
+
+impl<T> Mul<T> for Vec3
+where
+    T: Into<f64> + Copy,
+{
+    type Output = Self;
+
+    fn mul(self, rhs: T) -> Self {
+        Vec3 {
+            x: self.x * rhs.into(),
+            y: self.y * rhs.into(),
+            z: self.z * rhs.into(),
+        }
+    }
+}
+
+impl<T> Div<T> for Vec3
+where
+    T: Into<f64> + Copy,
+{
+    type Output = Self;
+
+    fn div(self, rhs: T) -> Self {
+        Vec3 {
+            x: self.x / rhs.into(),
+            y: self.y / rhs.into(),
+            z: self.z / rhs.into(),
+        }
+    }
+}
+
+impl Debug for Vec3 {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        write!(f, "({}, {}, {})", self.x, self.y, self.z)
+    }
+}
+
+impl Index<usize> for Vec3 {
+    type Output = f64;
+
+    fn index<'a>(&'a self, i: usize) -> &'a f64 {
+        match i {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => panic!("Unable to index into Vec3 with index {}", i),
+        }
+    }
+}
+
+impl IndexMut<usize> for Vec3 {
+    fn index_mut<'a>(&'a mut self, i: usize) -> &'a mut f64 {
+        match i {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            2 => &mut self.z,
+            _ => panic!("Unable to index into Vec3 with index {}", i),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -133,5 +218,52 @@ mod tests {
         let v2 = Vec3::from(1);
 
         assert_eq!(v1 + v2, Vec3::new(4, 5, 6));
+    }
+
+    #[test]
+    fn vector_negate() {
+        let v1 = -Vec3::new(3, 4, 5);
+        assert_eq!(v1, Vec3::new(-3, -4, -5));
+    }
+
+    #[test]
+    fn vector_sub() {
+        let v1 = Vec3::new(3, 4, 5);
+        let v2 = Vec3::from(1);
+
+        assert_eq!(v1 - v2, Vec3::new(2, 3, 4));
+    }
+
+    #[test]
+    fn vector_mul() {
+        let v1 = Vec3::new(3, 4, 5);
+        assert_eq!(v1 * 4, Vec3::new(12, 16, 20));
+    }
+
+    #[test]
+    fn vector_div() {
+        let v1 = Vec3::new(12, 16, 20);
+        assert_eq!(v1 / 4, Vec3::new(3, 4, 5));
+    }
+
+    #[test]
+    fn vector_index() {
+        let v1 = Vec3::new(3, 4, 5);
+        assert_eq!(v1[0], 3.0);
+        assert_eq!(v1[1], 4.0);
+        assert_eq!(v1[2], 5.0);
+
+        let mut v1 = Vec3::new(3, 4, 5);
+        v1[0] = 2.0;
+        assert_eq!(v1[0], 2.0);
+        assert_eq!(v1[1], 4.0);
+        assert_eq!(v1[2], 5.0);
+    }
+
+    #[test]
+    #[should_panic(expected = "Unable to index into Vec3 with index")]
+    fn vector_index_panic() {
+        let v1 = Vec3::new(3, 4, 5);
+        v1[12];
     }
 }
