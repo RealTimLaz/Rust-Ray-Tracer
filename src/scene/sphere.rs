@@ -1,4 +1,6 @@
-use super::{HitRecord, Hittable, Point3, Ray};
+use super::{HitRecord, Hittable};
+use crate::math::Point3;
+use crate::render::Ray;
 
 pub struct Sphere {
     center: Point3,

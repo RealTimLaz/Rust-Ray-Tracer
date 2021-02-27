@@ -1,9 +1,10 @@
 mod math;
+mod render;
+mod scene;
 
-use math::{Color, Hittable, Point3, Sphere};
-
-use crate::math::Ray;
-use crate::math::Vec3;
+use math::{Color, Point3, Vec3};
+use render::Ray;
+use scene::{Hittable, Sphere};
 
 fn main() {
     // Image
