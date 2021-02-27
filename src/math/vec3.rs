@@ -1,7 +1,7 @@
 use std::fmt::{Debug, Formatter, Result};
 use std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub};
 
-#[derive(PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct Vec3 {
     x: f64,
     y: f64,
@@ -33,10 +33,68 @@ impl Vec3 {
         }
     }
 
+    // Useful Constant Vectors
+
     pub fn zero() -> Self {
         Vec3 {
             x: 0.0,
             y: 0.0,
+            z: 0.0,
+        }
+    }
+
+    pub fn back() -> Self {
+        Vec3 {
+            x: 0.0,
+            y: 0.0,
+            z: -1.0,
+        }
+    }
+
+    pub fn down() -> Self {
+        Vec3 {
+            x: 0.0,
+            y: -1.0,
+            z: 0.0,
+        }
+    }
+
+    pub fn forward() -> Self {
+        Vec3 {
+            x: 0.0,
+            y: 0.0,
+            z: 1.0,
+        }
+    }
+
+    pub fn left() -> Self {
+        Vec3 {
+            x: -1.0,
+            y: 0.0,
+            z: 1.0,
+        }
+    }
+
+    pub fn one() -> Self {
+        Vec3 {
+            x: 1.0,
+            y: 1.0,
+            z: 1.0,
+        }
+    }
+
+    pub fn right() -> Self {
+        Vec3 {
+            x: 1.0,
+            y: 0.0,
+            z: 0.0,
+        }
+    }
+
+    pub fn up() -> Self {
+        Vec3 {
+            x: 0.0,
+            y: 1.0,
             z: 0.0,
         }
     }
@@ -67,6 +125,22 @@ impl Vec3 {
         let ib = (self.z * 255.0) as u8;
 
         println!("{} {} {}", ir, ig, ib);
+    }
+
+    pub fn length_squared(&self) -> f64 {
+        self.x * self.x + self.y * self.y + self.z * self.z
+    }
+
+    pub fn length(&self) -> f64 {
+        self.length_squared().sqrt()
+    }
+
+    pub fn unit_vector(self) -> Vec3 {
+        self / self.length()
+    }
+
+    pub fn dot(&self, other: &Vec3) -> f64 {
+        self.x * other.x + self.y * other.y + self.z * other.z
     }
 }
 
@@ -117,6 +191,18 @@ where
             x: self.x * rhs.into(),
             y: self.y * rhs.into(),
             z: self.z * rhs.into(),
+        }
+    }
+}
+
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z,
         }
     }
 }
