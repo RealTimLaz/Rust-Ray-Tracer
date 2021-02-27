@@ -2,8 +2,10 @@ mod math;
 mod render;
 mod scene;
 
+use rand::Rng;
+
 use math::{Color, Point3, Vec3};
-use render::Ray;
+use render::{Camera, Ray};
 use scene::{Hittable, Sphere};
 
 fn main() {
@@ -11,6 +13,7 @@ fn main() {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
+    let samples_per_pixel = 100;
 
     //World
     let world: Vec<Box<dyn Hittable>> = vec![
@@ -19,15 +22,10 @@ fn main() {
     ];
 
     // Camera
-    let viewport_height = 2.0;
-    let viewport_width = aspect_ratio * viewport_height;
-    let focal_length = 1.0;
+    let cam = Camera::new();
 
-    let origin = Point3::zero();
-    let horizontal = Vec3::right() * viewport_width;
-    let vertical = Vec3::up() * viewport_height;
-    let lower_left_corner =
-        origin - horizontal / 2 - vertical / 2 - (Vec3::forward() * focal_length);
+    // Misc
+    let mut rng = rand::thread_rng();
 
     // Render
 
@@ -38,16 +36,17 @@ fn main() {
     for j in (0..image_height).rev() {
         eprint!("\rScanlines remaining: {}", j);
         for i in 0..image_width {
-            let u = (i as f64) / (image_width - 1) as f64;
-            let v = (j as f64) / (image_height - 1) as f64;
+            let mut color = Color::zero();
+            for s in 0..samples_per_pixel {
+                let u = (i as f64 + rng.gen::<f64>()) / (image_width - 1) as f64;
+                let v = (j as f64 + rng.gen::<f64>()) / (image_height - 1) as f64;
 
-            let r = Ray::new(
-                origin,
-                lower_left_corner + u * horizontal + v * vertical - origin,
-            );
+                let r = cam.get_ray(u, v);
 
-            let color = ray_color(r, &world);
-            color.write_color();
+                color = color + ray_color(r, &world);
+            }
+
+            color.write_color(samples_per_pixel);
         }
     }
 
