@@ -75,6 +75,10 @@ impl Vec3 {
             z: self.z / length,
         }
     }
+
+    pub fn dot(&self, other: &Vec3) -> f64 {
+        self.x * other.x + self.y * other.y + self.z * other.z
+    }
 }
 
 // This macro helps us implement math operators on Vector3

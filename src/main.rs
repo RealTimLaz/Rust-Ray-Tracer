@@ -5,10 +5,25 @@ use graphics::Ray;
 
 use math::{Color, Point, Vec3};
 
+fn hit_sphere(center: Point, radius: f64, ray: &Ray) -> bool {
+    let oc = ray.origin - center;
+    // Quadratic formula
+    let a = ray.direction.length_squared();
+    let b = 2.0 * oc.dot(ray.direction);
+    let c = oc.length_squared() - radius * radius;
+
+    let discriminant = b * b - 4.0 * a * c;
+
+    discriminant > 0.0
+}
+
 fn ray_color(ray: Ray) -> Color {
+    if hit_sphere(Point::new(0, 0, -1), 0.5, &ray) {
+        return Color::RIGHT;
+    }
+
     let unit_direction = ray.direction.normalize();
     let t = 0.5 * (unit_direction.y + 1.0);
-
     (1.0 - t) * Color::ONE + t * Color::new(0.5, 0.7, 1.0)
 }
 
@@ -25,7 +40,7 @@ fn render_image() {
 
     let origin = Point::ZERO;
     let horizontal = viewport_width * Vec3::RIGHT;
-    let vertical = viewport_width * Vec3::UP;
+    let vertical = viewport_height * Vec3::UP;
 
     let lower_left_corner =
         &origin - &horizontal / 2.0 - &vertical / 2.0 - focal_length * Vec3::FORWARD;
