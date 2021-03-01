@@ -1,3 +1,7 @@
+mod math;
+
+use self::math::Color;
+
 fn write_ppm() {
     let image_width = 256;
     let image_height = 256;
@@ -7,15 +11,12 @@ fn write_ppm() {
     for j in (0..image_height).rev() {
         eprint!("\rScanlines remaining: {} ", j);
         for i in 0..image_width {
-            let r = (i as f64) / (image_width - 1) as f64;
-            let g = (j as f64) / (image_height - 1) as f64;
-            let b = 0.25;
-
-            let ir = (255.999 * r) as u8;
-            let ig = (255.999 * g) as u8;
-            let ib = (255.999 * b) as u8;
-
-            println!("{} {} {}", ir, ig, ib);
+            let pixel = Color::new(
+                (i as f64) / (image_width - 1) as f64,
+                (j as f64) / (image_height - 1) as f64,
+                0.25,
+            );
+            pixel.write_color();
         }
     }
 
