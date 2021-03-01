@@ -5,7 +5,7 @@ use graphics::Ray;
 
 use math::{Color, Point, Vec3};
 
-fn hit_sphere(center: Point, radius: f64, ray: &Ray) -> bool {
+fn hit_sphere(center: Point, radius: f64, ray: &Ray) -> Option<f64> {
     let oc = ray.origin - center;
     // Quadratic formula
     let a = ray.direction.length_squared();
@@ -14,12 +14,19 @@ fn hit_sphere(center: Point, radius: f64, ray: &Ray) -> bool {
 
     let discriminant = b * b - 4.0 * a * c;
 
-    discriminant > 0.0
+    if discriminant < 0.0 {
+        None
+    } else {
+        Some((-b - discriminant.sqrt()) / (2.0 * a))
+    }
 }
 
 fn ray_color(ray: Ray) -> Color {
-    if hit_sphere(Point::new(0, 0, -1), 0.5, &ray) {
-        return Color::RIGHT;
+    let potential_hit = hit_sphere(Point::new(0, 0, -1), 0.5, &ray);
+
+    if let Some(t) = potential_hit {
+        let normal = (ray.at(t) - Vec3::new(0, 0, -1)).normalize();
+        return 0.5 * (normal + Vec3::ONE);
     }
 
     let unit_direction = ray.direction.normalize();
