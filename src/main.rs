@@ -1,32 +1,15 @@
 mod graphics;
 mod math;
 
-use graphics::Ray;
+use graphics::{Hittable, Ray, Sphere};
 
 use math::{Color, Point, Vec3};
 
-fn hit_sphere(center: Point, radius: f64, ray: &Ray) -> Option<f64> {
-    let oc = ray.origin - center;
-    // Quadratic formula
-    let a = ray.direction.length_squared();
-    let b = 2.0 * oc.dot(ray.direction);
-    let c = oc.length_squared() - radius * radius;
+fn ray_color(ray: Ray, world: &Vec<Box<dyn Hittable>>) -> Color {
+    let potential_hit = world.hit(&ray, 0.0, f64::INFINITY);
 
-    let discriminant = b * b - 4.0 * a * c;
-
-    if discriminant < 0.0 {
-        None
-    } else {
-        Some((-b - discriminant.sqrt()) / (2.0 * a))
-    }
-}
-
-fn ray_color(ray: Ray) -> Color {
-    let potential_hit = hit_sphere(Point::new(0, 0, -1), 0.5, &ray);
-
-    if let Some(t) = potential_hit {
-        let normal = (ray.at(t) - Vec3::new(0, 0, -1)).normalize();
-        return 0.5 * (normal + Vec3::ONE);
+    if let Some(h) = potential_hit {
+        return 0.5 * (h.normal + Vec3::ONE);
     }
 
     let unit_direction = ray.direction.normalize();
@@ -39,6 +22,12 @@ fn render_image() {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = ((image_width as f64) / aspect_ratio) as u32;
+
+    // World
+    let world: Vec<Box<dyn Hittable>> = vec![
+        Box::new(Sphere::new(Point::new(0, 0, -1), 0.5)),
+        Box::new(Sphere::new(Point::new(0, -100.5, 1), 100.0)),
+    ];
 
     // Camera
     let viewport_height = 2.0;
@@ -61,7 +50,7 @@ fn render_image() {
             let v = j as f64 / (image_height - 1) as f64;
             let direction = &lower_left_corner + u * &horizontal + v * &vertical - &origin;
             let ray = Ray::new(&origin, &direction);
-            let pixel = ray_color(ray);
+            let pixel = ray_color(ray, &world);
             pixel.write_color();
         }
     }

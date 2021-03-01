@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Sub};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 pub struct Vec3 {
     pub x: f64,
@@ -187,7 +187,34 @@ macro_rules! impl_binary_operations {
     };
   }
 
+macro_rules! impl_unary_operators {
+    // $Operation is something like `Add`
+    // $op_fn is something like `add`
+    // $op_symbol is something like `+`
+    ($Operation:ident $op_fn:ident $op_symbol:tt) => {
+        impl<'a> $Operation for &'a Vec3 {
+            type Output = Vec3;
+            fn $op_fn(self) -> Vec3 {
+              Vec3 {
+                x: $op_symbol self.x,
+                y: $op_symbol self.y,
+                z: $op_symbol self.z,
+              }
+            }
+          }
+
+          impl $Operation for Vec3 {
+              type Output = Vec3;
+              fn $op_fn(self) -> Vec3 {
+                  $op_symbol &self
+              }
+          }
+    };
+}
+
 impl_binary_operations!(Add add +);
 impl_binary_operations!(Sub sub -);
 impl_binary_operations!(Mul mul *);
 impl_binary_operations!(Div div /);
+
+impl_unary_operators!(Neg neg -);
