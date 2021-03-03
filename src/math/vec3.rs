@@ -51,10 +51,19 @@ impl Vec3 {
         }
     }
 
-    pub fn write_color(self) {
-        let ir = (255.999 * self.x) as u8;
-        let ig = (255.999 * self.y) as u8;
-        let ib = (255.999 * self.z) as u8;
+    pub fn write_color<T>(self, samples_per_pixel: T)
+    where
+        T: Into<f64> + Copy,
+    {
+        let scale = 1.0 / samples_per_pixel.into();
+
+        let scaled_r = self.x * scale;
+        let scaled_g = self.y * scale;
+        let scaled_b = self.z * scale;
+
+        let ir = (255.999 * scaled_r) as u8;
+        let ig = (255.999 * scaled_g) as u8;
+        let ib = (255.999 * scaled_b) as u8;
 
         println!("{} {} {}", ir, ig, ib);
     }
