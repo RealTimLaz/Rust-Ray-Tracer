@@ -1,3 +1,5 @@
+use std::f64::consts::PI;
+
 use crate::math::{Point, Vec3};
 
 use super::Ray;
@@ -10,17 +12,27 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new() -> Camera {
-        let aspect_ratio = 16.0 / 9.0;
-        let viewport_height = 2.0;
-        let viewport_width = aspect_ratio * viewport_height;
-        let focal_length = 1.0;
+    fn degrees_radians(deg: f64) -> f64 {
+        deg * PI / 180.0
+    }
 
-        let origin = Point::ZERO;
-        let horizontal = viewport_width * Vec3::RIGHT;
-        let vertical = viewport_height * Vec3::UP;
-        let lower_left_corner =
-            origin - horizontal / 2 - vertical / 2 - focal_length * Vec3::FORWARD;
+    pub fn new<T>(position: Point, look_at: Vec3, up: Vec3, fov: T, aspect_ratio: f64) -> Camera
+    where
+        T: Into<f64> + Copy,
+    {
+        let theta = Camera::degrees_radians(fov.into());
+        let h = (theta / 2.0).tan();
+        let viewport_height = 2.0 * h;
+        let viewport_width = aspect_ratio * viewport_height;
+
+        let w = (position - look_at).normalize();
+        let u = up.cross(w).normalize();
+        let v = w.cross(u);
+
+        let origin = position;
+        let horizontal = viewport_width * u;
+        let vertical = viewport_height * v;
+        let lower_left_corner = origin - horizontal / 2 - vertical / 2 - w;
 
         Camera {
             origin,

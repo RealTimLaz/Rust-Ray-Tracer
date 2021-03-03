@@ -5,7 +5,7 @@ use graphics::materials::{Dielectric, Lambertian, Metal};
 use graphics::models::Sphere;
 use graphics::{Camera, Hittable, Ray};
 
-use math::{Color, Point};
+use math::{Color, Point, Vec3};
 
 use indicatif::ProgressBar;
 use rand::Rng;
@@ -60,6 +60,12 @@ pub fn render_image() {
             0.5,
             Box::new(Dielectric::new(1.5)),
         )),
+        //Inner glass
+        Box::new(Sphere::new(
+            Point::new(-1, 0, -1),
+            -0.4,
+            Box::new(Dielectric::new(1.5)),
+        )),
         Box::new(Sphere::new(
             Point::new(1, 0, -1),
             0.5,
@@ -68,7 +74,13 @@ pub fn render_image() {
     ];
 
     // Camera
-    let cam = Camera::new();
+    let cam = Camera::new(
+        Point::new(-2, 2, 1),
+        Vec3::new(0, 0, -1),
+        Vec3::new(0, 1, 0),
+        20,
+        aspect_ratio,
+    );
 
     print!("P3\n{} {}\n255\n", image_width, image_height);
 
