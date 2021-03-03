@@ -1,7 +1,7 @@
 mod graphics;
 mod math;
 
-use graphics::materials::{Lambertian, Metal};
+use graphics::materials::{Dielectric, Lambertian, Metal};
 use graphics::models::Sphere;
 use graphics::{Camera, Hittable, Ray};
 
@@ -35,8 +35,8 @@ pub fn render_image() {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = ((image_width as f64) / aspect_ratio) as u32;
-    let samples_per_pixel = 50;
-    let max_depth = 25;
+    let samples_per_pixel = 100;
+    let max_depth = 50;
 
     let progress_bar = ProgressBar::new(image_height.into());
 
@@ -44,26 +44,26 @@ pub fn render_image() {
     let world: Vec<Box<dyn Hittable>> = vec![
         //Ground
         Box::new(Sphere::new(
-            Point::new(0, 0, -1),
-            0.5,
-            Box::new(Lambertian::new(Color::new(0.7, 0.3, 0.3))),
+            Point::new(0, -100.5, -1),
+            100.0,
+            Box::new(Lambertian::new(Color::new(0.8, 0.8, 0.0))),
         )),
         //Middle
         Box::new(Sphere::new(
-            Point::new(0, -100.5, 1),
-            100.0,
-            Box::new(Lambertian::new(Color::new(0.8, 0.8, 0.0))),
+            Point::new(0, 0, -1),
+            0.5,
+            Box::new(Lambertian::new(Color::new(0.1, 0.2, 0.5))),
         )),
         //Left
         Box::new(Sphere::new(
             Point::new(-1, 0, -1),
             0.5,
-            Box::new(Metal::new(0.8 * Color::ONE, 0.3)),
+            Box::new(Dielectric::new(1.5)),
         )),
         Box::new(Sphere::new(
             Point::new(1, 0, -1),
             0.5,
-            Box::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1)),
+            Box::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0)),
         )),
     ];
 

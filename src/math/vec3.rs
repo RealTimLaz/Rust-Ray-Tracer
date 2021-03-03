@@ -126,6 +126,14 @@ impl Vec3 {
     pub fn reflect(&self, axis: Vec3) -> Vec3 {
         self - 2.0 * self.dot(axis) * axis
     }
+
+    pub fn refract(&self, normal: Vec3, ratio: f64) -> Vec3 {
+        let cos_theta = (-self).dot(normal).min(1.0);
+        let perp = ratio * (self + cos_theta * normal);
+        let parallel = (1.0 - perp.length_squared()).abs().sqrt() * -1.0 * normal;
+
+        perp + parallel
+    }
 }
 
 // This macro helps us implement math operators on Vector3

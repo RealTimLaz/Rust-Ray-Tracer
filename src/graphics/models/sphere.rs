@@ -34,16 +34,12 @@ impl Hittable for Sphere {
         let sqrt_discriminant = discriminant.sqrt();
         let mut root = (-b - sqrt_discriminant) / a;
 
-        if root > t_max {
-            return None;
-        } else if root < t_min {
-            root = (-b - sqrt_discriminant) / a;
-
-            if root < t_min || root > t_max {
+        if root < t_min || t_max < root {
+            root = (-b + sqrt_discriminant) / a;
+            if root < t_min || t_max < root {
                 return None;
             }
         }
-
         let intersection_point = ray.at(root);
         let normal = (intersection_point - self.center) / self.radius;
 
