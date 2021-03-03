@@ -52,7 +52,7 @@ impl Hittable for Sphere {
             normal,
             root,
             ray,
-            &self.material,
+            &*self.material,
         ))
     }
 }
