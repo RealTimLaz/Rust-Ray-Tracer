@@ -1,4 +1,4 @@
-# Rust-Ray-Tracer
+# Rust Ray Tracer
 A Ray Tracer written in Rust. Based off of [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
 
 The renderer supports:
