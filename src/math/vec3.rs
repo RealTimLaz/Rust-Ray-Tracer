@@ -1,5 +1,6 @@
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
+#[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
     pub x: f64,
     pub y: f64,
@@ -76,7 +77,7 @@ impl Vec3 {
         }
     }
 
-    pub fn dot(&self, other: &Vec3) -> f64 {
+    pub fn dot(&self, other: Vec3) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 }

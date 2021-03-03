@@ -14,7 +14,7 @@ impl Sphere {
 
 impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
-        let oc = ray.origin - &self.center;
+        let oc = ray.origin - self.center;
         // Quadratic formula
         let a = ray.direction.length_squared();
         let b = oc.dot(ray.direction);
@@ -37,7 +37,7 @@ impl Hittable for Sphere {
         }
 
         let intersection_point = ray.at(root);
-        let normal = (&intersection_point - &self.center) / self.radius;
+        let normal = (intersection_point - self.center) / self.radius;
 
         Some(HitRecord::new(intersection_point, normal, root, ray))
     }
