@@ -25,7 +25,7 @@ fn ray_color<T: Hittable + Sync + Send>(ray: Ray, world: &T, depth: u32) -> Colo
         }
     }
 
-    let unit_direction = ray.direction.normalize();
+    let unit_direction = ray.direction;
     let t = 0.5 * (unit_direction.y + 1.0);
     (1.0 - t) * Color::ONE + t * Color::new(0.5, 0.7, 1.0)
 }

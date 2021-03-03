@@ -21,21 +21,20 @@ impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let oc = ray.origin - self.center;
         // Quadratic formula
-        let a = ray.direction.length_squared();
         let b = oc.dot(ray.direction);
         let c = oc.length_squared() - self.radius * self.radius;
 
-        let discriminant = b.powi(2) - a * c;
+        let discriminant = b.powi(2) - c;
 
         if discriminant < 0.0 {
             return None;
         }
 
         let sqrt_discriminant = discriminant.sqrt();
-        let mut root = (-b - sqrt_discriminant) / a;
+        let mut root = -b - sqrt_discriminant;
 
         if root < t_min || t_max < root {
-            root = (-b + sqrt_discriminant) / a;
+            root = -b + sqrt_discriminant;
             if root < t_min || t_max < root {
                 return None;
             }

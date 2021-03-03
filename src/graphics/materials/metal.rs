@@ -24,7 +24,7 @@ impl Metal {
 
 impl Material for Metal {
     fn scatter(&self, ray: &Ray, hit: &HitRecord) -> Option<(Ray, Color)> {
-        let reflected = ray.direction.normalize().reflect(hit.normal);
+        let reflected = ray.direction.reflect(hit.normal);
         if reflected.dot(hit.normal) <= 0.0 {
             return None;
         }
