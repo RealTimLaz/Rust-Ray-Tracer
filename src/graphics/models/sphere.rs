@@ -1,14 +1,19 @@
-use crate::math::Point;
+use crate::{graphics::materials::Material, math::Point};
 
 use crate::graphics::{HitRecord, Hittable, Ray};
 pub struct Sphere {
     pub center: Point,
     pub radius: f64,
+    pub material: Box<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(center: Point, radius: f64) -> Sphere {
-        Sphere { center, radius }
+    pub fn new(center: Point, radius: f64, material: Box<dyn Material>) -> Sphere {
+        Sphere {
+            center,
+            radius,
+            material,
+        }
     }
 }
 
@@ -42,6 +47,12 @@ impl Hittable for Sphere {
         let intersection_point = ray.at(root);
         let normal = (intersection_point - self.center) / self.radius;
 
-        Some(HitRecord::new(intersection_point, normal, root, ray))
+        Some(HitRecord::new(
+            intersection_point,
+            normal,
+            root,
+            ray,
+            &self.material,
+        ))
     }
 }

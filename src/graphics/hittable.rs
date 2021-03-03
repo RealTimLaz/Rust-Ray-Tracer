@@ -1,16 +1,23 @@
 use crate::math::{Point, Vec3};
 
-use super::Ray;
+use super::{materials::Material, Ray};
 
-pub struct HitRecord {
+pub struct HitRecord<'a> {
     pub p: Point,
     pub normal: Vec3,
     pub t: f64,
     pub front_face: bool,
+    pub material: &'a Box<dyn Material>,
 }
 
-impl HitRecord {
-    pub fn new(p: Point, outward_normal: Vec3, t: f64, ray: &Ray) -> HitRecord {
+impl<'a> HitRecord<'a> {
+    pub fn new(
+        p: Point,
+        outward_normal: Vec3,
+        t: f64,
+        ray: &Ray,
+        material: &'a Box<dyn Material>,
+    ) -> HitRecord<'a> {
         let front_face = ray.direction.dot(outward_normal) < 0.0;
         HitRecord {
             p,
@@ -21,6 +28,7 @@ impl HitRecord {
             },
             t,
             front_face,
+            material,
         }
     }
 }

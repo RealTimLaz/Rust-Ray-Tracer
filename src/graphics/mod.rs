@@ -1,7 +1,9 @@
 mod camera;
 mod hittable;
-pub mod models;
 mod ray;
+
+pub mod materials;
+pub mod models;
 
 pub use camera::Camera;
 pub use hittable::HitRecord;

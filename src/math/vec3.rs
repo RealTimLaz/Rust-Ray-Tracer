@@ -117,6 +117,15 @@ impl Vec3 {
     pub fn dot(&self, other: Vec3) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
+
+    pub fn near_zero(&self) -> bool {
+        let eps = 1e-8;
+        self.x.abs() < eps && self.y.abs() < eps && self.z.abs() < eps
+    }
+
+    pub fn reflect(&self, axis: Vec3) -> Vec3 {
+        self - 2.0 * self.dot(axis) * axis
+    }
 }
 
 // This macro helps us implement math operators on Vector3

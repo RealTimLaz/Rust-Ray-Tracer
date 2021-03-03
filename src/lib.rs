@@ -1,10 +1,11 @@
 mod graphics;
 mod math;
 
+use graphics::materials::{Lambertian, Metal};
 use graphics::models::Sphere;
 use graphics::{Camera, Hittable, Ray};
 
-use math::{Color, Point, Vec3};
+use math::{Color, Point};
 
 use rand::Rng;
 
@@ -14,8 +15,12 @@ fn ray_color<T: Hittable>(ray: Ray, world: &T, depth: u32) -> Color {
     }
 
     if let Some(hit) = world.hit(&ray, 0.001, f64::INFINITY) {
-        let target = hit.p + hit.normal + Vec3::random_unit_vector();
-        return 0.5 * ray_color(Ray::new(hit.p, target - hit.p), world, depth - 1);
+        match hit.material.scatter(&ray, &hit) {
+            None => return Color::ZERO,
+            Some((scattered_ray, attenuation)) => {
+                return attenuation * ray_color(scattered_ray, world, depth - 1)
+            }
+        }
     }
 
     let unit_direction = ray.direction.normalize();
@@ -28,16 +33,37 @@ pub fn render_image() {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = ((image_width as f64) / aspect_ratio) as u32;
-    let samples_per_pixel = 100;
-    let max_depth = 50;
+    let samples_per_pixel = 50;
+    let max_depth = 25;
 
     // Random number generator
     let mut rng = rand::thread_rng();
 
     // World
     let world: Vec<Box<dyn Hittable>> = vec![
-        Box::new(Sphere::new(Point::new(0, 0, -1), 0.5)),
-        Box::new(Sphere::new(Point::new(0, -100.5, 1), 100.0)),
+        //Ground
+        Box::new(Sphere::new(
+            Point::new(0, 0, -1),
+            0.5,
+            Box::new(Lambertian::new(Color::new(0.7, 0.3, 0.3))),
+        )),
+        //Middle
+        Box::new(Sphere::new(
+            Point::new(0, -100.5, 1),
+            100.0,
+            Box::new(Lambertian::new(Color::new(0.8, 0.8, 0.0))),
+        )),
+        //Left
+        Box::new(Sphere::new(
+            Point::new(-1, 0, -1),
+            0.5,
+            Box::new(Metal::new(0.8 * Color::ONE, 0.3)),
+        )),
+        Box::new(Sphere::new(
+            Point::new(1, 0, -1),
+            0.5,
+            Box::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1)),
+        )),
     ];
 
     // Camera
