@@ -3,6 +3,6 @@ use crate::{
     math::Color,
 };
 
-pub trait Material {
+pub trait Material: Sync + Send {
     fn scatter(&self, ray: &Ray, hit: &HitRecord) -> Option<(Ray, Color)>;
 }
