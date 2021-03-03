@@ -20,7 +20,7 @@ impl Hittable for Sphere {
         let b = oc.dot(ray.direction);
         let c = oc.length_squared() - self.radius * self.radius;
 
-        let discriminant = b * b - a * c;
+        let discriminant = b.powi(2) - a * c;
 
         if discriminant < 0.0 {
             return None;
@@ -29,9 +29,12 @@ impl Hittable for Sphere {
         let sqrt_discriminant = discriminant.sqrt();
         let mut root = (-b - sqrt_discriminant) / a;
 
-        if root < t_min || t_max < root {
-            root = (-b + sqrt_discriminant) / a;
-            if root < t_min || t_max < root {
+        if root > t_max {
+            return None;
+        } else if root < t_min {
+            root = (-b - sqrt_discriminant) / a;
+
+            if root < t_min || root > t_max {
                 return None;
             }
         }
