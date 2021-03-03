@@ -1,10 +1,9 @@
 mod camera;
 mod hittable;
+pub mod models;
 mod ray;
-mod sphere;
 
-pub use self::camera::Camera;
-pub use self::hittable::HitRecord;
-pub use self::hittable::Hittable;
-pub use self::ray::Ray;
-pub use self::sphere::Sphere;
+pub use camera::Camera;
+pub use hittable::HitRecord;
+pub use hittable::Hittable;
+pub use ray::Ray;

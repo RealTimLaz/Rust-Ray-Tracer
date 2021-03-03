@@ -1,6 +1,6 @@
 use crate::math::Point;
 
-use super::{HitRecord, Hittable, Ray};
+use crate::graphics::{HitRecord, Hittable, Ray};
 pub struct Sphere {
     pub center: Point,
     pub radius: f64,

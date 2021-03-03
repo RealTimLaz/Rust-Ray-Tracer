@@ -75,6 +75,10 @@ impl Vec3 {
         }
     }
 
+    pub fn random_unit_vector() -> Self {
+        Vec3::random_in_unit_sphere().normalize()
+    }
+
     pub fn write_color<T>(self, samples_per_pixel: T)
     where
         T: Into<f64> + Copy,

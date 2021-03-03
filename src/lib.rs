@@ -1,7 +1,8 @@
 mod graphics;
 mod math;
 
-use graphics::{Camera, Hittable, Ray, Sphere};
+use graphics::models::Sphere;
+use graphics::{Camera, Hittable, Ray};
 
 use math::{Color, Point, Vec3};
 
@@ -12,11 +13,9 @@ fn ray_color<T: Hittable>(ray: Ray, world: &T, depth: u32) -> Color {
         return Color::ZERO;
     }
 
-    let potential_hit = world.hit(&ray, 0.0, f64::INFINITY);
-
-    if let Some(h) = potential_hit {
-        let target = h.p + h.normal + Vec3::random_in_unit_sphere();
-        return 0.5 * ray_color(Ray::new(h.p, target - h.p), world, depth - 1);
+    if let Some(hit) = world.hit(&ray, 0.001, f64::INFINITY) {
+        let target = hit.p + hit.normal + Vec3::random_unit_vector();
+        return 0.5 * ray_color(Ray::new(hit.p, target - hit.p), world, depth - 1);
     }
 
     let unit_direction = ray.direction.normalize();
@@ -29,7 +28,7 @@ pub fn render_image() {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = ((image_width as f64) / aspect_ratio) as u32;
-    let samples_per_pixel = 25;
+    let samples_per_pixel = 100;
     let max_depth = 50;
 
     // Random number generator
