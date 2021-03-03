@@ -1,5 +1,7 @@
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
+use rand::Rng;
+
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
     pub x: f64,
@@ -51,6 +53,28 @@ impl Vec3 {
         }
     }
 
+    fn random<T, U>(min: T, max: U) -> Self
+    where
+        T: Into<f64> + Copy,
+        U: Into<f64> + Copy,
+    {
+        let mut rng = rand::thread_rng();
+        Self {
+            x: rng.gen_range(min.into()..max.into()),
+            y: rng.gen_range(min.into()..max.into()),
+            z: rng.gen_range(min.into()..max.into()),
+        }
+    }
+
+    pub fn random_in_unit_sphere() -> Self {
+        loop {
+            let p = Vec3::random(-1, 1);
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
+    }
+
     pub fn write_color<T>(self, samples_per_pixel: T)
     where
         T: Into<f64> + Copy,
@@ -61,9 +85,9 @@ impl Vec3 {
         let scaled_g = self.y * scale;
         let scaled_b = self.z * scale;
 
-        let ir = (255.999 * scaled_r) as u8;
-        let ig = (255.999 * scaled_g) as u8;
-        let ib = (255.999 * scaled_b) as u8;
+        let ir = (255.999 * scaled_r.clamp(0.0, 0.999)) as u8;
+        let ig = (255.999 * scaled_g.clamp(0.0, 0.999)) as u8;
+        let ib = (255.999 * scaled_b.clamp(0.0, 0.999)) as u8;
 
         println!("{} {} {}", ir, ig, ib);
     }

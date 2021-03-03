@@ -7,11 +7,16 @@ use math::{Color, Point, Vec3};
 
 use rand::Rng;
 
-fn ray_color<T: Hittable>(ray: Ray, world: &T) -> Color {
+fn ray_color<T: Hittable>(ray: Ray, world: &T, depth: u32) -> Color {
+    if depth == 0 {
+        return Color::ZERO;
+    }
+
     let potential_hit = world.hit(&ray, 0.0, f64::INFINITY);
 
     if let Some(h) = potential_hit {
-        return 0.5 * (h.normal + Vec3::ONE);
+        let target = h.p + h.normal + Vec3::random_in_unit_sphere();
+        return 0.5 * ray_color(Ray::new(h.p, target - h.p), world, depth - 1);
     }
 
     let unit_direction = ray.direction.normalize();
@@ -24,7 +29,8 @@ pub fn render_image() {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = ((image_width as f64) / aspect_ratio) as u32;
-    let samples_per_pixel = 100;
+    let samples_per_pixel = 25;
+    let max_depth = 50;
 
     // Random number generator
     let mut rng = rand::thread_rng();
@@ -49,7 +55,7 @@ pub fn render_image() {
                 let v = ((j as f64) + rng.gen::<f64>()) / (image_height - 1) as f64;
 
                 let ray = cam.get_ray(u, v);
-                pixel_color = pixel_color + ray_color(ray, &world);
+                pixel_color = pixel_color + ray_color(ray, &world, max_depth);
             }
             pixel_color.write_color(samples_per_pixel);
         }
