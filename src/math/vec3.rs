@@ -53,7 +53,7 @@ impl Vec3 {
         }
     }
 
-    fn random<T, U>(min: T, max: U) -> Self
+    pub fn random<T, U>(min: T, max: U) -> Self
     where
         T: Into<f64> + Copy,
         U: Into<f64> + Copy,
@@ -77,6 +77,21 @@ impl Vec3 {
 
     pub fn random_unit_vector() -> Self {
         Vec3::random_in_unit_sphere().normalize()
+    }
+
+    pub fn random_in_unit_disk() -> Self {
+        let mut rng = rand::thread_rng();
+        loop {
+            let p = Vec3 {
+                x: rng.gen_range(-1.0..1.0),
+                y: rng.gen_range(-1.0..1.0),
+                z: 0.0,
+            };
+
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
     }
 
     pub fn write_color<T>(self, samples_per_pixel: T)
