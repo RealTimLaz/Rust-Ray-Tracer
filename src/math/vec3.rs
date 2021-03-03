@@ -81,9 +81,9 @@ impl Vec3 {
     {
         let scale = 1.0 / samples_per_pixel.into();
 
-        let scaled_r = self.x * scale;
-        let scaled_g = self.y * scale;
-        let scaled_b = self.z * scale;
+        let scaled_r = (self.x * scale).sqrt();
+        let scaled_g = (self.y * scale).sqrt();
+        let scaled_b = (self.z * scale).sqrt();
 
         let ir = (255.999 * scaled_r.clamp(0.0, 0.999)) as u8;
         let ig = (255.999 * scaled_g.clamp(0.0, 0.999)) as u8;
