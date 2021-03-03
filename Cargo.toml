@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 rand = "0.8.0"
 rayon = "1.5"
+indicatif = "0.15.0"

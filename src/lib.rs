@@ -7,6 +7,7 @@ use graphics::{Camera, Hittable, Ray};
 
 use math::{Color, Point};
 
+use indicatif::ProgressBar;
 use rand::Rng;
 use rayon::prelude::*;
 
@@ -36,6 +37,8 @@ pub fn render_image() {
     let image_height = ((image_width as f64) / aspect_ratio) as u32;
     let samples_per_pixel = 50;
     let max_depth = 25;
+
+    let progress_bar = ProgressBar::new(image_height.into());
 
     // World
     let world: Vec<Box<dyn Hittable>> = vec![
@@ -73,6 +76,10 @@ pub fn render_image() {
         .into_par_iter()
         .map(|i| (i % image_width, image_height - i / image_width))
         .map(|(i, j)| {
+            if i == 0 {
+                progress_bar.inc(1);
+            }
+
             // Random number generator
             let mut rng = rand::thread_rng();
             let mut pixel_color = Color::ZERO;
@@ -91,5 +98,5 @@ pub fn render_image() {
         pixel.0.write_color(samples_per_pixel);
     }
 
-    eprint!("\nDone.\n");
+    progress_bar.inc(1);
 }
