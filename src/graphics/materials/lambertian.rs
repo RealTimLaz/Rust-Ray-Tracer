@@ -16,12 +16,12 @@ impl Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, _ray: &Ray, hit: &HitRecord) -> Option<(Ray, Color)> {
+    fn scatter(&self, ray: &Ray, hit: &HitRecord) -> Option<(Ray, Color)> {
         let mut scatter_direction = hit.normal + Vec3::random_unit_vector();
         if scatter_direction.near_zero() {
             scatter_direction = hit.normal;
         }
-        let scattered_ray = Ray::new(hit.p, scatter_direction);
+        let scattered_ray = Ray::new(hit.p, scatter_direction, ray.time);
         let attenuation = self.albedo;
 
         Some((scattered_ray, attenuation))

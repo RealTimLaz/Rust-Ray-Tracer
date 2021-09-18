@@ -31,6 +31,7 @@ impl Material for Metal {
         let scattered_ray = Ray::new(
             hit.p,
             reflected + self.roughness * Vec3::random_in_unit_sphere(),
+            ray.time,
         );
         let attenuation = self.albedo;
         Some((scattered_ray, attenuation))

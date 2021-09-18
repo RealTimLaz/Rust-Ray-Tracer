@@ -50,6 +50,6 @@ impl Material for Dielectric {
                 unit_direction.refract(hit.normal, refraction_ratio)
             };
 
-        Some((Ray::new(hit.p, direction), attenuation))
+        Some((Ray::new(hit.p, direction, ray.time), attenuation))
     }
 }

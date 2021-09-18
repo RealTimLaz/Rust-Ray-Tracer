@@ -1,14 +1,5 @@
 use rand::Rng;
-use ray_tracer::{
-    graphics::{
-        materials::{Dielectric, Lambertian, Metal},
-        models::Sphere,
-        Camera, Hittable,
-    },
-    math::{Color, Point, Vec3},
-    render_image,
-    utils::Config,
-};
+use ray_tracer::{graphics::{Camera, Hittable, materials::{Dielectric, Lambertian, Metal}, models::{MovingSphere, Sphere}}, math::{Color, Point, Vec3}, render_image, utils::Config};
 
 fn random_world() -> Vec<Box<dyn Hittable>> {
     let mut world: Vec<Box<dyn Hittable>> = vec![
@@ -35,8 +26,12 @@ fn random_world() -> Vec<Box<dyn Hittable>> {
                 if choose_mat < 0.8 {
                     let albedo = Color::random(0, 1);
                     let sphere_material = Lambertian::new(albedo);
-                    world.push(Box::new(Sphere::new(
+                    let center2 = center + Vec3::UP * rng.gen_range(0.0..0.5);
+                    world.push(Box::new(MovingSphere::new(
                         center,
+                        center2,
+                        0.0,
+                        1.0,
                         0.2,
                         Box::new(sphere_material),
                     )));
@@ -86,8 +81,8 @@ fn random_world() -> Vec<Box<dyn Hittable>> {
 }
 
 fn setup_config() -> Config {
-    let aspect_ratio = 3.0 / 2.0;
-    let image_width = 1200;
+    let aspect_ratio = 16.0 / 9.0;
+    let image_width = 400;
 
     let camera = Camera::new(
         Point::new(13, 2, 3),
@@ -97,10 +92,12 @@ fn setup_config() -> Config {
         aspect_ratio,
         0.1,
         10.0,
+        0.0,
+        1.0,
     );
 
     let c = Config::new(camera, image_width, aspect_ratio);
-    c.set_samples_per_pixel(10)
+    c.set_samples_per_pixel(100)
 }
 
 fn main() {
