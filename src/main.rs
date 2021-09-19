@@ -1,5 +1,5 @@
 use rand::Rng;
-use ray_tracer::{graphics::{Bvh, Camera, Hittable, materials::{Dielectric, Lambertian, Metal}, models::{MovingSphere, Sphere}, textures::{CheckerTexture, PerlinTexture}}, math::{Color, Point, Vec3}, render_image, utils::Config};
+use ray_tracer::{graphics::{Bvh, Camera, Hittable, materials::{Dielectric, Lambertian, Metal}, models::{MovingSphere, Sphere}, textures::{CheckerTexture, ImageTexture, PerlinTexture}}, math::{Color, Point, Vec3}, render_image, utils::Config};
 
 fn random_world() -> Vec<Box<dyn Hittable>> {
     let checker = Box::new(CheckerTexture::new_from_colors(Color::new(0.2, 0.3, 0.1), Color::new(0.9, 0.9, 0.9)));
@@ -119,9 +119,24 @@ fn two_perlin_spheres() -> Vec<Box<dyn Hittable>> {
     ]
 }
 
+fn earth() -> Vec<Box<dyn Hittable>> {
+    let earth_texture = ImageTexture::new("earthmap.jpg");
+    let earth_surface = Lambertian::new(Box::new(earth_texture));
+
+    vec![
+        Box::new(
+            Sphere::new(
+                Point::ZERO,
+                2.0,
+                Box::new(earth_surface),
+            )
+        )
+    ]
+}
+
 fn setup_config() -> Config{
 
-    let scene_selector = 1;
+    let scene_selector = 2;
 
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 1200;
@@ -136,6 +151,10 @@ fn setup_config() -> Config{
 
         1 => {
             two_perlin_spheres()
+        }
+
+        2 => {
+            earth()
         }
 
         _ => {
