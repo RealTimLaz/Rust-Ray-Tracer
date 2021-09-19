@@ -1,5 +1,5 @@
 use rand::Rng;
-use ray_tracer::{graphics::{Bvh, Camera, Hittable, materials::{Dielectric, Lambertian, Metal}, models::{MovingSphere, Sphere}, textures::CheckerTexture}, math::{Color, Point, Vec3}, render_image, utils::Config};
+use ray_tracer::{graphics::{Bvh, Camera, Hittable, materials::{Dielectric, Lambertian, Metal}, models::{MovingSphere, Sphere}, textures::{CheckerTexture, PerlinTexture}}, math::{Color, Point, Vec3}, render_image, utils::Config};
 
 fn random_world() -> Vec<Box<dyn Hittable>> {
     let checker = Box::new(CheckerTexture::new_from_colors(Color::new(0.2, 0.3, 0.1), Color::new(0.9, 0.9, 0.9)));
@@ -100,9 +100,28 @@ fn two_spheres() -> Vec<Box<dyn Hittable>> {
     ]
 }
 
+fn two_perlin_spheres() -> Vec<Box<dyn Hittable>> {
+    vec![
+        Box::new(
+            Sphere::new(
+                Point::new(0, -1000, 0),
+                1000.0,
+                Box::new(Lambertian::new(Box::new(PerlinTexture::new())))
+            )
+        ),
+        Box::new(
+            Sphere::new(
+                Point::new(0, 2, 0),
+                2.0,
+                Box::new(Lambertian::new(Box::new(PerlinTexture::new())))
+            )
+        )
+    ]
+}
+
 fn setup_config() -> Config{
 
-    let scene_selector = 0;
+    let scene_selector = 1;
 
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 1200;
@@ -114,6 +133,10 @@ fn setup_config() -> Config{
         0 => {
            two_spheres()
         },
+
+        1 => {
+            two_perlin_spheres()
+        }
 
         _ => {
             aperture = 0.1;
