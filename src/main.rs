@@ -7,7 +7,7 @@ fn random_world() -> Vec<Box<dyn Hittable>> {
         Box::new(Sphere::new(
             Point::new(0, -1000, 0),
             1000.0,
-            Box::new(Lambertian::new(Color::new(0.5, 0.5, 0.5))),
+            Box::new(Lambertian::new_from_color(Color::new(0.5, 0.5, 0.5))),
         )),
     ];
 
@@ -25,7 +25,7 @@ fn random_world() -> Vec<Box<dyn Hittable>> {
             if (center - Point::new(3, 0.2, 0)).length() > 0.9 {
                 if choose_mat < 0.8 {
                     let albedo = Color::random(0, 1);
-                    let sphere_material = Lambertian::new(albedo);
+                    let sphere_material = Lambertian::new_from_color(albedo);
                     let center2 = center + Vec3::UP * rng.gen_range(0.0..0.5);
                     world.push(Box::new(MovingSphere::new(
                         center,
@@ -63,7 +63,7 @@ fn random_world() -> Vec<Box<dyn Hittable>> {
         Box::new(material),
     )));
 
-    let material = Lambertian::new(Color::new(0.4, 0.2, 0.1));
+    let material = Lambertian::new_from_color(Color::new(0.4, 0.2, 0.1));
     world.push(Box::new(Sphere::new(
         Point::new(-4, 1, 0),
         1.0,

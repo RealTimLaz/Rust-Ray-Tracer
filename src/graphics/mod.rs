@@ -6,6 +6,7 @@ mod bvh;
 
 pub mod materials;
 pub mod models;
+pub mod textures;
 
 pub use camera::Camera;
 pub use hittable::HitRecord;

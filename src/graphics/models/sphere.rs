@@ -1,3 +1,5 @@
+use std::f64::consts::PI;
+
 use crate::{graphics::materials::Material, math::{Point, Vec3}};
 
 use crate::graphics::{Aabb, HitRecord, Hittable, Ray};
@@ -14,6 +16,13 @@ impl Sphere {
             radius,
             material,
         }
+    }
+
+    pub fn get_uv(p: Point) -> (f64, f64) {
+        let theta = (-p.y).acos();
+        let phi = (-p.z).atan2(p.x) + PI;
+
+        (phi / (2.0 * PI), theta / PI)
     }
 }
 
@@ -41,11 +50,14 @@ impl Hittable for Sphere {
         }
         let intersection_point = ray.at(root);
         let normal = (intersection_point - self.center) / self.radius;
+        let (u, v) = Sphere::get_uv(normal);
 
         Some(HitRecord::new(
             intersection_point,
             normal,
             root,
+            u,
+            v,
             ray,
             &*self.material,
         ))

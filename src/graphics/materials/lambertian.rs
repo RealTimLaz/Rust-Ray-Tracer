@@ -1,17 +1,16 @@
-use crate::{
-    graphics::{HitRecord, Ray},
-    math::{Color, Vec3},
-};
+use crate::{graphics::{HitRecord, Ray, textures::{SolidColor, Texture}}, math::{Color, Vec3}};
 
 use super::Material;
 
 pub struct Lambertian {
-    albedo: Color,
+    albedo: Box<dyn Texture>,
 }
 
 impl Lambertian {
-    pub fn new(albedo: Color) -> Lambertian {
-        Lambertian { albedo }
+    pub fn new_from_color(albedo: Color) -> Lambertian {
+        Lambertian { 
+            albedo: Box::new(SolidColor::new(albedo)) 
+        }
     }
 }
 
@@ -22,7 +21,7 @@ impl Material for Lambertian {
             scatter_direction = hit.normal;
         }
         let scattered_ray = Ray::new(hit.p, scatter_direction, ray.time);
-        let attenuation = self.albedo;
+        let attenuation = self.albedo.value(hit.u, hit.v, hit.p);
 
         Some((scattered_ray, attenuation))
     }

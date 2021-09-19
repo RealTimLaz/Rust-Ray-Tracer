@@ -2,6 +2,8 @@ use crate::graphics::{Aabb, HitRecord, Hittable, Ray};
 use crate::math::{Point, Vec3};
 use crate::graphics::materials::Material;
 
+use super::Sphere;
+
 pub struct MovingSphere {
     pub center0: Point,
     pub center1: Point,
@@ -52,11 +54,13 @@ impl Hittable for MovingSphere {
          }
          let intersection_point = ray.at(root);
          let normal = (intersection_point - self.center(ray.time)) / self.radius;
- 
+         let (u, v) = Sphere::get_uv(normal);
          Some(HitRecord::new(
              intersection_point,
              normal,
              root,
+             u,
+             v,
              ray,
              &*self.material,
          ))
