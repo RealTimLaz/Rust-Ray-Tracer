@@ -106,14 +106,14 @@ fn two_perlin_spheres() -> Vec<Box<dyn Hittable>> {
             Sphere::new(
                 Point::new(0, -1000, 0),
                 1000.0,
-                Box::new(Lambertian::new(Box::new(PerlinTexture::new())))
+                Box::new(Lambertian::new(Box::new(PerlinTexture::new_with_scale(4.0))))
             )
         ),
         Box::new(
             Sphere::new(
                 Point::new(0, 2, 0),
                 2.0,
-                Box::new(Lambertian::new(Box::new(PerlinTexture::new())))
+                Box::new(Lambertian::new(Box::new(PerlinTexture::new_with_scale(4.0))))
             )
         )
     ]
