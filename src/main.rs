@@ -81,29 +81,65 @@ fn random_world() -> Vec<Box<dyn Hittable>> {
     world
 }
 
-fn setup_config() -> Config {
+fn two_spheres() -> Vec<Box<dyn Hittable>> {
+    vec![
+        Box::new(
+            Sphere::new(
+                Point::new(0, -10, 0),
+                10.0,
+                Box::new(Lambertian::new(Box::new(CheckerTexture::new_from_colors(Color::new(0.2, 0.3, 0.1), Color::new(0.9,0.9,0.9))))),
+            )
+        ),
+        Box::new(
+            Sphere::new(
+                Point::new(0, 10, 0),
+                10.0,
+                Box::new(Lambertian::new(Box::new(CheckerTexture::new_from_colors(Color::new(0.2, 0.3, 0.1), Color::new(0.9,0.9,0.9))))),     
+            )
+        )
+    ]
+}
+
+fn setup_config() -> Config<Bvh>{
+
+    let scene_selector = 0;
+
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 1200;
+
+    let fov = 20.0;
+    let mut aperture = 0.0;
+
+    let world = match scene_selector {
+        0 => {
+           two_spheres()
+        },
+
+        _ => {
+            aperture = 0.1;
+            random_world()
+        }
+    };
 
     let camera = Camera::new(
         Point::new(13, 2, 3),
         Point::ZERO,
         Vec3::UP,
-        20,
+        fov,
         aspect_ratio,
-        0.1,
+        aperture,
         10.0,
         0.0,
         1.0,
     );
 
-    let c = Config::new(camera, image_width, aspect_ratio);
+    let world = Bvh::new(world, 0.0, 1.0);
+
+    let c = Config::new(world, camera, image_width, aspect_ratio);
     c.set_samples_per_pixel(100)
 }
 
 fn main() {
     let config = setup_config();
-    let world = random_world();
-    let world = Bvh::new(world, 0.0, 1.0);
-    render_image(config, world);
+    render_image(config);
 }

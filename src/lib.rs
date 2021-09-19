@@ -30,7 +30,7 @@ fn ray_color<T: Hittable + Sync + Send>(ray: Ray, world: &T, depth: u32) -> Colo
     (1.0 - t) * Color::ONE + t * Color::new(0.5, 0.7, 1.0)
 }
 
-pub fn render_image<T: Hittable + Sync + Send>(config: Config, world: T) {
+pub fn render_image<T: Hittable + Sync + Send>(config: Config<T>) {
     let image_width = config.image_size.0;
     let image_height = config.image_size.1;
 
@@ -53,7 +53,7 @@ pub fn render_image<T: Hittable + Sync + Send>(config: Config, world: T) {
                 let v = ((j as f64) + rng.gen::<f64>()) / (image_height - 1) as f64;
 
                 let ray = config.camera.get_ray(u, v);
-                pixel_color = pixel_color + ray_color(ray, &world, config.max_depth);
+                pixel_color = pixel_color + ray_color(ray, &config.world, config.max_depth);
             }
             (pixel_color, i, j)
         })
