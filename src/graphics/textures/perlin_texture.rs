@@ -28,7 +28,7 @@ impl PerlinTexture {
 
 impl Texture for PerlinTexture {
     fn value(&self, _u: f64, _v: f64, p: Point) -> Color {
-        Color::ONE * self.noise.noise(self.scale * p)
+        Color::ONE * 0.5 * (1.0 + (self.scale * p.z + 10.0 * self.noise.turb(self.scale * p, 7)).sin())
     }
 }
 
