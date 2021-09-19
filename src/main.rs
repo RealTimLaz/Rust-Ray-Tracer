@@ -1,13 +1,14 @@
 use rand::Rng;
-use ray_tracer::{graphics::{Bvh, Camera, Hittable, materials::{Dielectric, Lambertian, Metal}, models::{MovingSphere, Sphere}}, math::{Color, Point, Vec3}, render_image, utils::Config};
+use ray_tracer::{graphics::{Bvh, Camera, Hittable, materials::{Dielectric, Lambertian, Metal}, models::{MovingSphere, Sphere}, textures::CheckerTexture}, math::{Color, Point, Vec3}, render_image, utils::Config};
 
 fn random_world() -> Vec<Box<dyn Hittable>> {
+    let checker = Box::new(CheckerTexture::new_from_colors(Color::new(0.2, 0.3, 0.1), Color::new(0.9, 0.9, 0.9)));
     let mut world: Vec<Box<dyn Hittable>> = vec![
         //Ground
         Box::new(Sphere::new(
             Point::new(0, -1000, 0),
             1000.0,
-            Box::new(Lambertian::new_from_color(Color::new(0.5, 0.5, 0.5))),
+            Box::new(Lambertian::new(checker)),
         )),
     ];
 
@@ -82,7 +83,7 @@ fn random_world() -> Vec<Box<dyn Hittable>> {
 
 fn setup_config() -> Config {
     let aspect_ratio = 16.0 / 9.0;
-    let image_width = 400;
+    let image_width = 1200;
 
     let camera = Camera::new(
         Point::new(13, 2, 3),

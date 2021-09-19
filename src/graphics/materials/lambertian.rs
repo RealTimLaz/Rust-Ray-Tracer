@@ -7,6 +7,13 @@ pub struct Lambertian {
 }
 
 impl Lambertian {
+
+    pub fn new(texture: Box<dyn Texture>) -> Lambertian {
+        Lambertian {
+            albedo: texture
+        }
+    }
+
     pub fn new_from_color(albedo: Color) -> Lambertian {
         Lambertian { 
             albedo: Box::new(SolidColor::new(albedo)) 
