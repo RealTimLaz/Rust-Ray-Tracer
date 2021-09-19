@@ -1,6 +1,6 @@
 use crate::math::{Point, Vec3};
 
-use super::{materials::Material, Ray};
+use super::{Aabb, Ray, materials::Material};
 
 pub struct HitRecord<'a> {
     pub p: Point,
@@ -35,6 +35,8 @@ impl<'a> HitRecord<'a> {
 
 pub trait Hittable: Sync + Send {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb>;
 }
 
 impl Hittable for Vec<Box<dyn Hittable>> {
@@ -56,4 +58,25 @@ impl Hittable for Vec<Box<dyn Hittable>> {
 
         current_record
     }
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb> {
+        if self.is_empty() {
+            return None;
+        }
+
+        let mut output_box = Aabb::new(Vec3::ZERO, Vec3::ZERO);
+        let mut first_box = true;
+
+        for object in self.iter() {
+            match object.bounding_box(time0, time1) {
+                None => return None,
+                Some (b) => {
+                    output_box = if first_box {b} else {output_box.surrounding_box(&b)};
+                    first_box = false;
+                }
+            }
+        }
+
+        Some(output_box)
+    }   
 }

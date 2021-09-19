@@ -1,5 +1,5 @@
 use rand::Rng;
-use ray_tracer::{graphics::{Camera, Hittable, materials::{Dielectric, Lambertian, Metal}, models::{MovingSphere, Sphere}}, math::{Color, Point, Vec3}, render_image, utils::Config};
+use ray_tracer::{graphics::{Bvh, Camera, Hittable, materials::{Dielectric, Lambertian, Metal}, models::{MovingSphere, Sphere}}, math::{Color, Point, Vec3}, render_image, utils::Config};
 
 fn random_world() -> Vec<Box<dyn Hittable>> {
     let mut world: Vec<Box<dyn Hittable>> = vec![
@@ -103,5 +103,6 @@ fn setup_config() -> Config {
 fn main() {
     let config = setup_config();
     let world = random_world();
+    let world = Bvh::new(world, 0.0, 1.0);
     render_image(config, world);
 }

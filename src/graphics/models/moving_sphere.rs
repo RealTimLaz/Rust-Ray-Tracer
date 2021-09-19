@@ -1,5 +1,5 @@
-use crate::graphics::{HitRecord, Hittable, Ray};
-use crate::math::Point;
+use crate::graphics::{Aabb, HitRecord, Hittable, Ray};
+use crate::math::{Point, Vec3};
 use crate::graphics::materials::Material;
 
 pub struct MovingSphere {
@@ -60,5 +60,17 @@ impl Hittable for MovingSphere {
              ray,
              &*self.material,
          ))
+    }
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb> {
+        let box0 = Aabb::new(
+            self.center(time0) - Vec3::ONE * self.radius, 
+            self.center(time0) + Vec3::ONE * self.radius,
+        );
+        let box1 = Aabb::new(
+            self.center(time1) - Vec3::ONE * self.radius, 
+            self.center(time1) + Vec3::ONE * self.radius,
+        );
+        Some(box0.surrounding_box(&box1))
     }
 }

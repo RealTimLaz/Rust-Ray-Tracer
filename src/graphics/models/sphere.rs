@@ -1,6 +1,6 @@
-use crate::{graphics::materials::Material, math::Point};
+use crate::{graphics::materials::Material, math::{Point, Vec3}};
 
-use crate::graphics::{HitRecord, Hittable, Ray};
+use crate::graphics::{Aabb, HitRecord, Hittable, Ray};
 pub struct Sphere {
     pub center: Point,
     pub radius: f64,
@@ -49,5 +49,13 @@ impl Hittable for Sphere {
             ray,
             &*self.material,
         ))
+    }
+
+    fn bounding_box(&self, _time0: f64, _time1: f64) -> Option<Aabb> {
+        Some(
+            Aabb::new(
+            self.center - Vec3::ONE * self.radius, 
+            self.center + Vec3::ONE * self.radius)
+        )
     }
 }

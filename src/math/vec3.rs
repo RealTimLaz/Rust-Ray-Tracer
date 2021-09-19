@@ -1,6 +1,32 @@
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, Div, Index, Mul, Neg, Sub};
+use std::slice::Iter;
 
 use rand::Rng;
+use rand::distributions::Standard;
+use rand::prelude::Distribution;
+
+#[derive(Debug)]
+pub enum Axis {
+  X,
+  Y,
+  Z
+}
+
+impl Axis {
+  pub fn iterator() -> Iter<'static, Axis> {
+    [Axis::X, Axis::Y, Axis::Z].iter()
+  }
+}
+
+impl Distribution<Axis> for Standard {
+  fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Axis {
+      match rng.gen_range(0..=2) {
+        0 => Axis::X,
+        1 => Axis::Y,
+        _ => Axis::Z,
+      }
+  }
+}
 
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3 {
@@ -157,6 +183,18 @@ impl Vec3 {
 
         perp + parallel
     }
+}
+
+impl<'a> Index<&'a Axis> for  Vec3 {
+  type Output = f64;
+
+  fn index(&self, axis: &'a Axis) -> &Self::Output {
+    match axis {
+      Axis::X => &self.x,
+      Axis::Y => &self.y,
+      Axis::Z => &self.z,
+    }
+  }
 }
 
 // This macro helps us implement math operators on Vector3
