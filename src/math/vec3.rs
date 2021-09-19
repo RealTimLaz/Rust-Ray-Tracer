@@ -1,5 +1,4 @@
 use std::ops::{Add, Div, Index, Mul, Neg, Sub};
-use std::slice::Iter;
 
 use rand::Rng;
 use rand::distributions::Standard;
@@ -10,12 +9,6 @@ pub enum Axis {
   X,
   Y,
   Z
-}
-
-impl Axis {
-  pub fn iterator() -> Iter<'static, Axis> {
-    [Axis::X, Axis::Y, Axis::Z].iter()
-  }
 }
 
 impl Distribution<Axis> for Standard {

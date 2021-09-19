@@ -55,7 +55,7 @@ impl Bvh {
         }
     }
 
-    fn get_box_axis_value(a: &Box<dyn Hittable>, time0: f64, time1: f64, axis: &Axis) -> f64 {
+    fn get_box_axis_value(a: &dyn Hittable, time0: f64, time1: f64, axis: &Axis) -> f64 {
         let box_option = a.bounding_box(time0, time1);
 
         match box_option {

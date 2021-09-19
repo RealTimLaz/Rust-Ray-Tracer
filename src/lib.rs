@@ -30,7 +30,7 @@ fn ray_color<T: Hittable + Sync + Send>(ray: Ray, world: &T, depth: u32) -> Colo
     (1.0 - t) * Color::ONE + t * Color::new(0.5, 0.7, 1.0)
 }
 
-pub fn render_image<T: Hittable + Sync + Send>(config: Config<T>) {
+pub fn render_image(config: Config) {
     let image_width = config.image_size.0;
     let image_height = config.image_size.1;
 

@@ -45,6 +45,16 @@ pub trait Hittable: Sync + Send {
     fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb>;
 }
 
+impl Hittable for Box<dyn Hittable> {
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+        (**self).hit(ray, t_min, t_max)
+    }
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb> {
+        (**self).bounding_box(time0, time1)
+    }
+}
+
 impl Hittable for Vec<Box<dyn Hittable>> {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let mut current_record = None;

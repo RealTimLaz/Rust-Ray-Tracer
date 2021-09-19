@@ -100,7 +100,7 @@ fn two_spheres() -> Vec<Box<dyn Hittable>> {
     ]
 }
 
-fn setup_config() -> Config<Bvh>{
+fn setup_config() -> Config{
 
     let scene_selector = 0;
 
@@ -135,7 +135,7 @@ fn setup_config() -> Config<Bvh>{
 
     let world = Bvh::new(world, 0.0, 1.0);
 
-    let c = Config::new(world, camera, image_width, aspect_ratio);
+    let c = Config::new(Box::new(world), camera, image_width, aspect_ratio);
     c.set_samples_per_pixel(100)
 }
 

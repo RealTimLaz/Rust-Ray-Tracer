@@ -1,15 +1,15 @@
 use crate::graphics::{Camera, Hittable};
 
-pub struct Config<T : Hittable + Sync + Send> {
+pub struct Config {
     pub camera: Camera,
     pub samples_per_pixel: u32,
     pub max_depth: u32,
     pub image_size: (u32, u32),
-    pub world: T
+    pub world: Box<dyn Hittable>
 }
 
-impl<T> Config<T> where T: Hittable + Sync + Send {
-    pub fn new(world: T, camera: Camera, image_width: u32, aspect_ratio: f64) -> Self {
+impl Config {
+    pub fn new(world: Box<dyn Hittable>, camera: Camera, image_width: u32, aspect_ratio: f64) -> Self {
         let image_height = ((image_width as f64) / aspect_ratio) as u32;
         Config {
             camera,
